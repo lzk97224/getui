@@ -1,17 +1,17 @@
-package getui
+package model
 
 type Audience struct {
 	Cid           []string `json:"cid,omitempty"`
 	Alias         []string `json:"alias,omitempty"`
-	Tag           []string `json:"tag"`
-	FastCustomTag string   `json:"fast_custom_tag"`
-	All           string   `json:"all"`
+	Tag           []string `json:"tag,omitempty"`
+	FastCustomTag string   `json:"fast_custom_tag,omitempty"`
+	All           string   `json:"all,omitempty"`
 }
 type Settings struct {
 	Ttl          int       `json:"ttl,omitempty"`      //消息离线时间设置，单位毫秒，-1表示不设离线，-1 ～ 3 * 24 * 3600 * 1000(3天)之间
 	Strategy     *Strategy `json:"strategy,omitempty"` //厂商通道策略 https://docs.getui.com/getui/server/rest_v2/common_args/?id=doc-title-5
-	Speed        int       `json:"speed"`
-	ScheduleTime int64     `json:"schedule_time"`
+	Speed        int       `json:"speed,omitempty"`
+	ScheduleTime int64     `json:"schedule_time,omitempty"`
 }
 type Strategy struct {
 	Default int `json:"default,omitempty"`
@@ -90,4 +90,9 @@ type Alert struct {
 	Subtitle        string   `json:"subtitle,omitempty"`
 	SubtitleLocKey  string   `json:"subtitle_loc_key,omitempty"`
 	SubtitleLocArgs []string `json:"subtitle_loc_args,omitempty"`
+}
+
+type UserBindAlias struct {
+	Cid   string `json:"cid"`
+	Alias string `json:"alias"`
 }
