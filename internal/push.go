@@ -196,3 +196,46 @@ func (c *Client) PushCreateMsgAndBatchByCid(requestId, groupName string, notific
 	}
 	return taskId, c.PushBatchByCid(taskId, cid)
 }
+
+func (c *Client) pushBatchCreateTransmission(requestId, groupName string, transmission string) (string, error) {
+	token := c.getToken(c.appId)
+	resp := &PushBatchCreateMsgResp{}
+
+	err := PostHeader(c.getUrl(PATH_PUSH_BATCH_CREATE_MSG), &PushBatchCreateMsgReq{
+		RequestId: requestId,
+		GroupName: groupName,
+		PushMessage: &model.PushMessage{
+			Transmission: transmission,
+		},
+		PushChannel: &model.PushChannel{
+			Ios: nil,
+			Android: &model.Android{Ups: &model.Ups{
+				Transmission: transmission,
+			}},
+		},
+	}, resp, NewHeader().Add("token", token))
+
+	if err != nil {
+		return "", err
+	}
+	if resp.Code != CODE_SUCCESS {
+		return "", fmt.Errorf("%v", resp.Msg)
+	}
+	return resp.Data.Taskid, nil
+}
+
+func (c *Client) PushCreateTransmissionAndBatchByAlias(requestId, groupName string, transmission string, alias []string) (string, error) {
+	taskId, err := c.pushBatchCreateTransmission(requestId, groupName, transmission)
+	if err != nil {
+		return "", err
+	}
+	return taskId, c.PushBatchByAlias(taskId, alias)
+}
+
+func (c *Client) PushCreateTransmissionAndBatchByCid(requestId, groupName string, transmission string, cid []string) (string, error) {
+	taskId, err := c.pushBatchCreateTransmission(requestId, groupName, transmission)
+	if err != nil {
+		return "", err
+	}
+	return taskId, c.PushBatchByCid(taskId, cid)
+}
