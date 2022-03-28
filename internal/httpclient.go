@@ -21,23 +21,23 @@ func (h *Header) Add(key, value string) *Header {
 	return h
 }
 
-func GetHeader[Resp any](url string, respBody Resp, header *Header) error {
+func GetHeader(url string, respBody interface{}, header *Header) error {
 	return baseRequest(http.MethodGet, url, struct{}{}, respBody, header)
 }
 
-func PostHeader[Req any, Resp any](url string, reqBody Req, respBody Resp, header *Header) error {
+func PostHeader(url string, reqBody interface{}, respBody interface{}, header *Header) error {
 	return baseRequest(http.MethodPost, url, reqBody, respBody, header)
 }
 
-func Post[Req any, Resp any](url string, reqBody Req, respBody Resp) error {
+func Post(url string, reqBody interface{}, respBody interface{}) error {
 	return baseRequest(http.MethodPost, url, reqBody, respBody, nil)
 }
 
-func Delete[Req any, Resp any](url string, reqBody Req, respBody Resp) error {
+func Delete(url string, reqBody interface{}, respBody interface{}) error {
 	return baseRequest(http.MethodDelete, url, reqBody, respBody, nil)
 }
 
-func baseRequest[Req any, Resp any](method, url string, reqBody Req, respBody Resp, header *Header) error {
+func baseRequest(method, url string, reqBody interface{}, respBody interface{}, header *Header) error {
 	//创建客户端实例
 	client := &http.Client{
 		Timeout: 10 * time.Second,

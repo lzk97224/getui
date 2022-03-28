@@ -18,7 +18,7 @@ type PushSingleResp struct {
 	BaseResp
 	Data PushSingleData `json:"data"`
 }
-type PushSingleData map[string]any
+type PushSingleData map[string]interface{}
 
 func (c *Client) PushSingleByCid(requestId, cid string, notification *model.Notification) error {
 	token := c.getToken(c.appId)
