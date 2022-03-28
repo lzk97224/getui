@@ -64,7 +64,7 @@ func (c *Client) PushSingleBatchByCid(requestId []string, cid []string, notifica
 	}
 
 	pageSize := 200
-	requestIdGroup := SliceSplit[string](pageSize, requestId)
+	requestIdGroup := SliceSplit(pageSize, requestId)
 	cidGroup := SliceSplit(pageSize, cid)
 
 	for index, ids := range requestIdGroup {
