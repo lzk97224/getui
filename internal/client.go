@@ -50,7 +50,7 @@ func (c *Client) getUrl(paths ...string) string {
 }
 
 func (c *Client) sign() (string, string) {
-	timestamp := fmt.Sprintf("%d", time.Now().UnixMilli())
+	timestamp := fmt.Sprintf("%d", time.Now().UnixNano()/int64(time.Millisecond))
 
 	original := c.appKey + timestamp + c.masterSecret
 
