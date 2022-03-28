@@ -37,8 +37,8 @@ func (c *Client) Auth() (*AuthRespData, error) {
 	return &resp.Data, nil
 }
 
-func (c *Client) AuthDelete(token string) error {
-
+func (c *Client) AuthDelete() error {
+	token := c.getToken(c.appId)
 	resp := &BaseResp{}
 
 	err := Delete(c.getUrl(PATH_AUTH, token), struct{}{}, resp)

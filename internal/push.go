@@ -20,7 +20,8 @@ type PushSingleResp struct {
 }
 type PushSingleData map[string]any
 
-func (c *Client) PushSingleByCid(token string, requestId, cid string, notification *model.Notification) error {
+func (c *Client) PushSingleByCid(requestId, cid string, notification *model.Notification) error {
+	token := c.getToken(c.appId)
 
 	resp := &PushSingleResp{}
 
@@ -54,8 +55,8 @@ type PushBatchReq struct {
 	MsgList []PushSingleReq `json:"msg_list"`
 }
 
-func (c *Client) PushSingleBatchByCid(token string, requestId []string, cid []string, notification *model.Notification) error {
-
+func (c *Client) PushSingleBatchByCid(requestId []string, cid []string, notification *model.Notification) error {
+	token := c.getToken(c.appId)
 	resp := &BaseResp{}
 
 	if len(requestId) != len(cid) {
@@ -105,7 +106,8 @@ type PushBatchCreateMsgResp struct {
 	} `json:"data"`
 }
 
-func (c *Client) PushBatchCreateMsg(token string, requestId, groupName string, notification *model.Notification) (string, error) {
+func (c *Client) PushBatchCreateMsg(requestId, groupName string, notification *model.Notification) (string, error) {
+	token := c.getToken(c.appId)
 	resp := &PushBatchCreateMsgResp{}
 
 	err := PostHeader(c.getUrl(PATH_PUSH_BATCH_CREATE_MSG), &PushBatchCreateMsgReq{
@@ -131,7 +133,8 @@ func (c *Client) PushBatchCreateMsg(token string, requestId, groupName string, n
 	return resp.Data.Taskid, nil
 }
 
-func (c *Client) PushBatchByCid(token string, taskId string, cid []string) error {
+func (c *Client) PushBatchByCid(taskId string, cid []string) error {
+	token := c.getToken(c.appId)
 	req := &struct {
 		Audience *model.Audience `json:"audience"`
 		Taskid   string          `json:"taskid"`
@@ -154,7 +157,8 @@ func (c *Client) PushBatchByCid(token string, taskId string, cid []string) error
 	return nil
 }
 
-func (c *Client) PushBatchByAlias(token string, taskId string, alias []string) error {
+func (c *Client) PushBatchByAlias(taskId string, alias []string) error {
+	token := c.getToken(c.appId)
 	req := &struct {
 		Audience *model.Audience `json:"audience"`
 		Taskid   string          `json:"taskid"`
@@ -177,18 +181,18 @@ func (c *Client) PushBatchByAlias(token string, taskId string, alias []string) e
 	return nil
 }
 
-func (c *Client) PushCreateMsgAndBatchByAlias(token string, requestId, groupName string, notification *model.Notification, alias []string) (string, error) {
-	taskId, err := c.PushBatchCreateMsg(token, requestId, groupName, notification)
+func (c *Client) PushCreateMsgAndBatchByAlias(requestId, groupName string, notification *model.Notification, alias []string) (string, error) {
+	taskId, err := c.PushBatchCreateMsg(requestId, groupName, notification)
 	if err != nil {
 		return "", err
 	}
-	return taskId, c.PushBatchByAlias(token, taskId, alias)
+	return taskId, c.PushBatchByAlias(taskId, alias)
 }
 
-func (c *Client) PushCreateMsgAndBatchByCid(token string, requestId, groupName string, notification *model.Notification, cid []string) (string, error) {
-	taskId, err := c.PushBatchCreateMsg(token, requestId, groupName, notification)
+func (c *Client) PushCreateMsgAndBatchByCid(requestId, groupName string, notification *model.Notification, cid []string) (string, error) {
+	taskId, err := c.PushBatchCreateMsg(requestId, groupName, notification)
 	if err != nil {
 		return "", err
 	}
-	return taskId, c.PushBatchByCid(token, taskId, cid)
+	return taskId, c.PushBatchByCid(taskId, cid)
 }
