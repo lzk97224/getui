@@ -1,7 +1,7 @@
 package internal
 
-func SliceSplit(size int, arr []string) [][]string {
-	result := make([][]string, 0, len(arr)/size+1)
+func SliceSplit[T any](size int, arr []T) [][]T {
+	result := make([][]T, 0, len(arr)/size+1)
 	groupNum := len(arr) / size
 
 	begin := 0
