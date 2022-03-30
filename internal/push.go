@@ -55,7 +55,7 @@ type PushBatchReq struct {
 	MsgList []PushSingleReq `json:"msg_list"`
 }
 
-func (c *Client) PushSingleBatchByCid(requestId []string, cid []string, notification *model.Notification) error {
+func (c *Client) PushSingleBatchByCid(requestId []string, cid []string, notification []*model.Notification) error {
 	token := c.getToken(c.appId)
 	resp := &BaseResp{}
 
@@ -65,22 +65,70 @@ func (c *Client) PushSingleBatchByCid(requestId []string, cid []string, notifica
 
 	pageSize := 200
 	requestIdGroup := SliceSplit(pageSize, requestId)
-	cidGroup := SliceSplit(pageSize, cid)
 
-	for index, ids := range requestIdGroup {
+	for groupIndex, ids := range requestIdGroup {
 		msgList := make([]PushSingleReq, 0, pageSize)
-		for i, id := range ids {
+		for colIndex, id := range ids {
+			index := groupIndex*pageSize + colIndex
 			msgList = append(msgList, PushSingleReq{
 				RequestId: id,
 				Audience: &model.Audience{
-					Cid: []string{cidGroup[index][i]},
+					Cid: []string{cid[index]},
 				},
 				PushMessage: &model.PushMessage{
-					Notification: notification,
+					Notification: notification[index],
+				},
+				PushChannel: &model.PushChannel{
+					Ios: nil,
+					Android: &model.Android{Ups: &model.Ups{
+						Notification: notification[index],
+					}},
 				},
 			})
 		}
 		err := PostHeader(c.getUrl(PATH_PUSH_SINGLE_BATCH_CID), &PushBatchReq{
+			IsAsync: false,
+			MsgList: msgList,
+		}, resp, NewHeader().Add("token", token))
+		if err != nil {
+			log.Printf("request err:%v", err)
+		}
+	}
+	return nil
+}
+
+func (c *Client) PushSingleBatchByAlias(requestId []string, alias []string, notification []*model.Notification) error {
+	token := c.getToken(c.appId)
+	resp := &BaseResp{}
+
+	if len(requestId) != len(alias) {
+		return fmt.Errorf("parrams error")
+	}
+
+	pageSize := 200
+	requestIdGroup := SliceSplit(pageSize, requestId)
+
+	for groupIndex, ids := range requestIdGroup {
+		msgList := make([]PushSingleReq, 0, pageSize)
+		for colIndex, id := range ids {
+			index := groupIndex*pageSize + colIndex
+			msgList = append(msgList, PushSingleReq{
+				RequestId: id,
+				Audience: &model.Audience{
+					Alias: []string{alias[index]},
+				},
+				PushMessage: &model.PushMessage{
+					Notification: notification[index],
+				},
+				PushChannel: &model.PushChannel{
+					Ios: nil,
+					Android: &model.Android{Ups: &model.Ups{
+						Notification: notification[index],
+					}},
+				},
+			})
+		}
+		err := PostHeader(c.getUrl(PATH_PUSH_SINGLE_BATCH_ALIAS), &PushBatchReq{
 			IsAsync: false,
 			MsgList: msgList,
 		}, resp, NewHeader().Add("token", token))
