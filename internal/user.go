@@ -2,14 +2,14 @@ package internal
 
 import (
 	"fmt"
-	"github.com/lzk97224/getui/public/model"
+	"github.com/lzk97224/getui/getui"
 )
 
 type UserBindAliasReq struct {
-	DataList []*model.UserBindAlias `json:"data_list"`
+	DataList []*getui.UserBindAlias `json:"data_list"`
 }
 
-func (c *Client) UserBindAlias(dataList []*model.UserBindAlias) error {
+func (c *Client) UserBindAlias(dataList []*getui.UserBindAlias) error {
 	token := c.getToken(c.appId)
 	resp := &BaseResp{}
 

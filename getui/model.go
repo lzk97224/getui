@@ -1,4 +1,4 @@
-package model
+package getui
 
 type Audience struct {
 	Cid           []string `json:"cid,omitempty"`

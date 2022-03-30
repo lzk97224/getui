@@ -2,7 +2,7 @@ package internal
 
 import (
 	"fmt"
-	"github.com/lzk97224/getui/public/model"
+	"github.com/lzk97224/getui/getui"
 	"testing"
 )
 
@@ -47,7 +47,7 @@ func TestClient_DeleteAuth(t *testing.T) {
 }
 func TestClient_PushSingleByCid(t *testing.T) {
 	err := client.PushSingleByCid(
-		"ec9d386372f37b299cd801bfa3df8ae81", "ec9d386372f37b299cd801bfa3df8ae8", &model.Notification{
+		"ec9d386372f37b299cd801bfa3df8ae81", "ec9d386372f37b299cd801bfa3df8ae8", &getui.Notification{
 			Title:     "这是标题",
 			Body:      "这是我要提示你的内容，快来看看吧。",
 			ClickType: "startapp",
@@ -56,11 +56,11 @@ func TestClient_PushSingleByCid(t *testing.T) {
 }
 
 func TestClient_PushBatchByCid(t *testing.T) {
-	err := client.PushSingleBatchByCid([]string{"ec9d386372f37b299cd801bfa3df8ae8"}, []string{"ec9d386372f37b299cd801bfa3df8ae8"}, &model.Notification{
-		Title:     "这是标题",
-		Body:      "这是我要提示你的内容，快来看看吧。",
-		ClickType: "startapp",
-		Payload:   "这是我要提示你的内容，快来看看吧",
+	err := client.PushSingleBatchByCid([]string{"ec9d386372f37b299cd801bfa3df8ae8"}, []string{"ec9d386372f37b299cd801bfa3df8ae8"}, []*getui.Notification{
+		{Title: "这是标题",
+			Body:      "这是我要提示你的内容，快来看看吧。",
+			ClickType: "startapp",
+			Payload:   "这是我要提示你的内容，快来看看吧"},
 	})
 	fmt.Println(err)
 }
