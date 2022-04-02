@@ -16,6 +16,9 @@ type StoreFunc func(appId, token string)
 type GetFunc func(appId string) string
 
 type Client struct {
+	User         *User
+	Push         *Push
+	Auth         *Auth
 	appId        string
 	appKey       string
 	masterSecret string
@@ -30,10 +33,13 @@ func NewClient(appId, appKey, masterSecret string, storeToken StoreFunc, getToke
 		masterSecret: masterSecret,
 		storeToken:   storeToken,
 	}
+	c.User = &User{Client: c}
+	c.Push = &Push{Client: c}
+	c.Auth = &Auth{Client: c}
 	c.getToken = func(appId string) string {
 		token := getToken(appId)
 		if len(token) <= 0 {
-			auth, err := c.Auth()
+			auth, err := c.Auth.Auth()
 			if err != nil {
 				return ""
 			}

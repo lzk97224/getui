@@ -32,7 +32,7 @@ func TestClient_Auth(t *testing.T) {
 		appKey:       "appKey",
 		masterSecret: "masterSecret",
 	}
-	auth, err := c.Auth()
+	auth, err := c.Auth.Auth()
 	fmt.Println(auth, err)
 }
 
@@ -42,11 +42,11 @@ func TestClient_DeleteAuth(t *testing.T) {
 		appKey:       "appKey",
 		masterSecret: "masterSecret",
 	}
-	err := c.AuthDelete()
+	err := c.Auth.Delete()
 	fmt.Println(err)
 }
 func TestClient_PushSingleByCid(t *testing.T) {
-	err := client.PushSingleByCid(
+	err := client.Push.SingleByCid(
 		"ec9d386372f37b299cd801bfa3df8ae81", "ec9d386372f37b299cd801bfa3df8ae8", &getui.Notification{
 			Title:     "这是标题",
 			Body:      "这是我要提示你的内容，快来看看吧。",
@@ -56,7 +56,7 @@ func TestClient_PushSingleByCid(t *testing.T) {
 }
 
 func TestClient_PushBatchByCid(t *testing.T) {
-	err := client.PushSingleBatchByCid([]string{"ec9d386372f37b299cd801bfa3df8ae8"}, []string{"ec9d386372f37b299cd801bfa3df8ae8"}, []*getui.Notification{
+	err := client.Push.SingleBatchByCid([]string{"ec9d386372f37b299cd801bfa3df8ae8"}, []string{"ec9d386372f37b299cd801bfa3df8ae8"}, []*getui.Notification{
 		{Title: "这是标题",
 			Body:      "这是我要提示你的内容，快来看看吧。",
 			ClickType: "startapp",

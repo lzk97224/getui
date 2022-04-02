@@ -6,6 +6,10 @@ import (
 	"log"
 )
 
+type Push struct {
+	*Client
+}
+
 type PushSingleReq struct {
 	RequestId   string             `json:"request_id,omitempty"`   //请求唯一标识号，10-32位之间；如果request_id重复，会导致消息丢失
 	GroupName   string             `json:"group_name,omitempty"`   //任务组名。多个消息任务可以用同一个任务组名，后续可根据任务组名查询推送情况（长度限制100字符，且不能含有特殊符号）
@@ -20,7 +24,7 @@ type PushSingleResp struct {
 }
 type PushSingleData map[string]interface{}
 
-func (c *Client) PushSingleByCid(requestId, cid string, notification *getui.Notification) error {
+func (c *Push) SingleByCid(requestId, cid string, notification *getui.Notification) error {
 	token := c.getToken(c.appId)
 
 	resp := &PushSingleResp{}
@@ -55,7 +59,7 @@ type PushBatchReq struct {
 	MsgList []PushSingleReq `json:"msg_list"`
 }
 
-func (c *Client) PushSingleBatchByCid(requestId []string, cid []string, notification []*getui.Notification) error {
+func (c *Push) SingleBatchByCid(requestId []string, cid []string, notification []*getui.Notification) error {
 	token := c.getToken(c.appId)
 	resp := &BaseResp{}
 
@@ -97,7 +101,7 @@ func (c *Client) PushSingleBatchByCid(requestId []string, cid []string, notifica
 	return nil
 }
 
-func (c *Client) PushSingleBatchByAlias(requestId []string, alias []string, notification []*getui.Notification) error {
+func (c *Push) SingleBatchByAlias(requestId []string, alias []string, notification []*getui.Notification) error {
 	token := c.getToken(c.appId)
 	resp := &BaseResp{}
 
@@ -139,7 +143,7 @@ func (c *Client) PushSingleBatchByAlias(requestId []string, alias []string, noti
 	return nil
 }
 
-func (c *Client) PushSingleBatchTransmissionByAlias(requestId []string, alias []string, transmissions []string) error {
+func (c *Push) SingleBatchTransmissionByAlias(requestId []string, alias []string, transmissions []string) error {
 	token := c.getToken(c.appId)
 	resp := &BaseResp{}
 
@@ -197,7 +201,7 @@ type PushBatchCreateMsgResp struct {
 	} `json:"data"`
 }
 
-func (c *Client) PushBatchCreateMsg(requestId, groupName string, notification *getui.Notification) (string, error) {
+func (c *Push) BatchCreateMsg(requestId, groupName string, notification *getui.Notification) (string, error) {
 	token := c.getToken(c.appId)
 	resp := &PushBatchCreateMsgResp{}
 
@@ -224,7 +228,7 @@ func (c *Client) PushBatchCreateMsg(requestId, groupName string, notification *g
 	return resp.Data.Taskid, nil
 }
 
-func (c *Client) PushBatchByCid(taskId string, cid []string) error {
+func (c *Push) BatchByCid(taskId string, cid []string) error {
 	token := c.getToken(c.appId)
 	req := &struct {
 		Audience *getui.Audience `json:"audience"`
@@ -248,7 +252,7 @@ func (c *Client) PushBatchByCid(taskId string, cid []string) error {
 	return nil
 }
 
-func (c *Client) PushBatchByAlias(taskId string, alias []string) error {
+func (c *Push) BatchByAlias(taskId string, alias []string) error {
 	token := c.getToken(c.appId)
 	req := &struct {
 		Audience *getui.Audience `json:"audience"`
@@ -272,23 +276,23 @@ func (c *Client) PushBatchByAlias(taskId string, alias []string) error {
 	return nil
 }
 
-func (c *Client) PushCreateMsgAndBatchByAlias(requestId, groupName string, notification *getui.Notification, alias []string) (string, error) {
-	taskId, err := c.PushBatchCreateMsg(requestId, groupName, notification)
+func (c *Push) CreateMsgAndBatchByAlias(requestId, groupName string, notification *getui.Notification, alias []string) (string, error) {
+	taskId, err := c.BatchCreateMsg(requestId, groupName, notification)
 	if err != nil {
 		return "", err
 	}
-	return taskId, c.PushBatchByAlias(taskId, alias)
+	return taskId, c.BatchByAlias(taskId, alias)
 }
 
-func (c *Client) PushCreateMsgAndBatchByCid(requestId, groupName string, notification *getui.Notification, cid []string) (string, error) {
-	taskId, err := c.PushBatchCreateMsg(requestId, groupName, notification)
+func (c *Push) CreateMsgAndBatchByCid(requestId, groupName string, notification *getui.Notification, cid []string) (string, error) {
+	taskId, err := c.BatchCreateMsg(requestId, groupName, notification)
 	if err != nil {
 		return "", err
 	}
-	return taskId, c.PushBatchByCid(taskId, cid)
+	return taskId, c.BatchByCid(taskId, cid)
 }
 
-func (c *Client) pushBatchCreateTransmission(requestId, groupName string, transmission string) (string, error) {
+func (c *Push) batchCreateTransmission(requestId, groupName string, transmission string) (string, error) {
 	token := c.getToken(c.appId)
 	resp := &PushBatchCreateMsgResp{}
 
@@ -315,18 +319,18 @@ func (c *Client) pushBatchCreateTransmission(requestId, groupName string, transm
 	return resp.Data.Taskid, nil
 }
 
-func (c *Client) PushCreateTransmissionAndBatchByAlias(requestId, groupName string, transmission string, alias []string) (string, error) {
-	taskId, err := c.pushBatchCreateTransmission(requestId, groupName, transmission)
+func (c *Push) CreateTransmissionAndBatchByAlias(requestId, groupName string, transmission string, alias []string) (string, error) {
+	taskId, err := c.batchCreateTransmission(requestId, groupName, transmission)
 	if err != nil {
 		return "", err
 	}
-	return taskId, c.PushBatchByAlias(taskId, alias)
+	return taskId, c.BatchByAlias(taskId, alias)
 }
 
-func (c *Client) PushCreateTransmissionAndBatchByCid(requestId, groupName string, transmission string, cid []string) (string, error) {
-	taskId, err := c.pushBatchCreateTransmission(requestId, groupName, transmission)
+func (c *Push) CreateTransmissionAndBatchByCid(requestId, groupName string, transmission string, cid []string) (string, error) {
+	taskId, err := c.batchCreateTransmission(requestId, groupName, transmission)
 	if err != nil {
 		return "", err
 	}
-	return taskId, c.PushBatchByCid(taskId, cid)
+	return taskId, c.BatchByCid(taskId, cid)
 }

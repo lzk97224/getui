@@ -2,6 +2,10 @@ package internal
 
 import "fmt"
 
+type Auth struct {
+	*Client
+}
+
 type AuthReq struct {
 	Sign      string `json:"sign"`
 	Timestamp string `json:"timestamp"`
@@ -17,7 +21,7 @@ type AuthRespData struct {
 	Token      string `json:"token"`
 }
 
-func (c *Client) Auth() (*AuthRespData, error) {
+func (c *Auth) Auth() (*AuthRespData, error) {
 	sign, i := c.sign()
 
 	resp := &AuthResp{}
@@ -37,7 +41,7 @@ func (c *Client) Auth() (*AuthRespData, error) {
 	return &resp.Data, nil
 }
 
-func (c *Client) AuthDelete() error {
+func (c *Auth) Delete() error {
 	token := c.getToken(c.appId)
 	resp := &BaseResp{}
 

@@ -5,11 +5,15 @@ import (
 	"github.com/lzk97224/getui/getui"
 )
 
+type User struct {
+	*Client
+}
+
 type UserBindAliasReq struct {
 	DataList []*getui.UserBindAlias `json:"data_list"`
 }
 
-func (c *Client) UserBindAlias(dataList []*getui.UserBindAlias) error {
+func (c *User) BindAlias(dataList []*getui.UserBindAlias) error {
 	token := c.getToken(c.appId)
 	resp := &BaseResp{}
 
@@ -35,7 +39,7 @@ type UserFindAliasByCidData struct {
 	Alias string `json:"alias"`
 }
 
-func (c *Client) UserFindAliasByCid(cid string) (string, error) {
+func (c *User) FindAliasByCid(cid string) (string, error) {
 	token := c.getToken(c.appId)
 	resp := &UserFindAliasByCidResp{}
 
@@ -59,7 +63,7 @@ type UserFindCidByAliasData struct {
 	Cid []string `json:"cid"`
 }
 
-func (c *Client) UserFindCidByAlias(alias string) ([]string, error) {
+func (c *User) FindCidByAlias(alias string) ([]string, error) {
 	token := c.getToken(c.appId)
 	resp := &UserFindCidByAliasResp{}
 
