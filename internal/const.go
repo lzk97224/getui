@@ -5,16 +5,18 @@ const (
 )
 
 const (
-	PATH_AUTH                    = "/auth"
-	PATH_PUSH_SINGLE_CID         = "/push/single/cid"
-	PATH_PUSH_SINGLE_BATCH_CID   = "/push/single/batch/cid"
-	PATH_PUSH_SINGLE_BATCH_ALIAS = "/push/single/batch/alias"
-	PATH_PUSH_BATCH_CREATE_MSG   = "/push/list/message"
-	PATH_PUSH_BATCH_BY_CID       = "/push/list/cid"
-	PATH_PUSH_BATCH_BY_ALIAS     = "/push/list/alias"
-	PATH_USER_ALIAS              = "/user/alias"
-	PATH_USER_ALIAS_CID          = "/user/alias/cid"
-	PATH_USER_CID_ALIAS          = "/user/cid/alias"
+	PATH_AUTH                    = "/auth"                    //授权接口
+	PATH_PUSH_SINGLE_CID         = "/push/single/cid"         //向单个用户推送消息，可根据cid指定用户
+	PATH_PUSH_SINGLE_BATCH_CID   = "/push/single/batch/cid"   //批量发送单推消息，每个cid用户的推送内容都不同的情况下，使用此接口，可提升推送效率。
+	PATH_PUSH_SINGLE_BATCH_ALIAS = "/push/single/batch/alias" //批量发送单推消息，在给每个别名用户的推送内容都不同的情况下，可以使用此接口
+	PATH_PUSH_BATCH_CREATE_MSG   = "/push/list/message"       //此接口用来创建消息体，并返回taskid，为批量推的前置步骤
+	PATH_PUSH_BATCH_BY_CID       = "/push/list/cid"           //对列表中所有cid进行消息推送
+	PATH_PUSH_BATCH_BY_ALIAS     = "/push/list/alias"         //对列表中所有别名进行消息推送。调
+	PATH_USER_ALIAS              = "/user/alias"              //绑定别名 ;一个cid只能绑定一个别名，若已绑定过别名的cid再次绑定新别名，则前一个别名会自动解绑，并绑定新别名。
+	PATH_USER_ALIAS_CID          = "/user/alias/cid"          //通过传入的cid查询对应的别名信息
+	PATH_USER_CID_ALIAS          = "/user/cid/alias"          //通过传入的别名查询对应的cid信息
+	PATH_BATCH_UNBIND_ALIAS      = "/user/alias"              //批量解除别名与cid的关系
+	PATH_UNBIND_BY_ALIAS         = "/user/alias"              //解绑所有与该别名绑定的cid
 )
 
 const (

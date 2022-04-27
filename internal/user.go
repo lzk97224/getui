@@ -77,3 +77,35 @@ func (c *User) FindCidByAlias(alias string) ([]string, error) {
 	}
 	return resp.Data.Cid, nil
 }
+
+func (c *User) BatchUnbindAlias(dataList []*getui.UserBindAlias) error {
+	token := c.getToken(c.appId)
+	resp := &BaseResp{}
+
+	err := DeleteHeader(c.getUrl(PATH_BATCH_UNBIND_ALIAS), &UserBindAliasReq{
+		DataList: dataList,
+	}, resp, NewHeader().Add("token", token))
+
+	if err != nil {
+		return err
+	}
+	if resp.Code != CODE_SUCCESS {
+		return fmt.Errorf("%v", resp.Msg)
+	}
+	return nil
+}
+
+func (c *User) UnbindByAlias(alias string) error {
+	token := c.getToken(c.appId)
+	resp := &BaseResp{}
+
+	err := DeleteHeader(c.getUrl(PATH_UNBIND_BY_ALIAS, alias), nil, resp, NewHeader().Add("token", token))
+
+	if err != nil {
+		return err
+	}
+	if resp.Code != CODE_SUCCESS {
+		return fmt.Errorf("%v", resp.Msg)
+	}
+	return nil
+}

@@ -29,6 +29,10 @@ func PostHeader(url string, reqBody any, respBody any, header *Header) error {
 	return baseRequest(http.MethodPost, url, reqBody, respBody, header)
 }
 
+func DeleteHeader(url string, reqBody any, respBody any, header *Header) error {
+	return baseRequest(http.MethodDelete, url, reqBody, respBody, header)
+}
+
 func Post(url string, reqBody any, respBody any) error {
 	return baseRequest(http.MethodPost, url, reqBody, respBody, nil)
 }
