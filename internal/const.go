@@ -17,6 +17,9 @@ const (
 	PATH_USER_CID_ALIAS          = "/user/cid/alias"          //通过传入的别名查询对应的cid信息
 	PATH_BATCH_UNBIND_ALIAS      = "/user/alias"              //批量解除别名与cid的关系
 	PATH_UNBIND_BY_ALIAS         = "/user/alias"              //解绑所有与该别名绑定的cid
+	PATH_BIND_TAG_USER_TO_TAGS   = "/user/custom_tag/cid"     //一个用户绑定一批标签
+	PATH_BIND_TAG_USERS_TO_TAG   = "/user/custom_tag/batch"   //一批用户绑定一个标签
+	PATH_UNBIND_TAG_USERS_OF_TAG = "/user/custom_tag/batch"   //一批用户解绑一个标签
 )
 
 const (
