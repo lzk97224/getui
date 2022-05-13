@@ -160,3 +160,5 @@ func (c *User) BindUsersToTag(tag string, cids []string) error {
 	}
 	return nil
 }
+
+//https://docs.getui.com/getui/server/rest_v2/user/
