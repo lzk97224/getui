@@ -20,6 +20,8 @@ const (
 	PATH_BIND_TAG_USER_TO_TAGS   = "/user/custom_tag/cid"     //一个用户绑定一批标签
 	PATH_BIND_TAG_USERS_TO_TAG   = "/user/custom_tag/batch"   //一批用户绑定一个标签
 	PATH_UNBIND_TAG_USERS_OF_TAG = "/user/custom_tag/batch"   //一批用户解绑一个标签
+	PATH_QUERY_USER_TAG_OF_TAG   = "/user/custom_tag/cid"     //根据cid查询用户标签列表
+	PATH_ADD_BLACK               = "/user/black/cid"          //根据cid查询用户标签列表
 )
 
 const (

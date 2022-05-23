@@ -3,6 +3,7 @@ package internal
 import (
 	"fmt"
 	"github.com/lzk97224/getui/getui"
+	"strings"
 )
 
 type User struct {
@@ -138,11 +139,16 @@ func (c *User) BindUserToTags(cid string, tags []string) error {
 	return nil
 }
 
+type BindUsersToTagResp struct {
+	BaseResp
+	Data getui.BindUsersToTagData `json:"data"`
+}
+
 //BindUsersToTag 一批用户绑定一个标签，此接口为增量
 //此接口有频次控制(每分钟最多100次，每天最多10000次)，申请修改请点击右侧“技术咨询”了解详情
-func (c *User) BindUsersToTag(tag string, cids []string) error {
+func (c *User) BindUsersToTag(tag string, cids []string) (*getui.BindUsersToTagData, error) {
 	token := c.getToken(c.appId)
-	resp := &BaseResp{}
+	resp := &BindUsersToTagResp{}
 
 	req := struct {
 		Cid []string `json:"cid"`
@@ -153,11 +159,80 @@ func (c *User) BindUsersToTag(tag string, cids []string) error {
 	err := PostHeader(c.getUrl(PATH_BIND_TAG_USERS_TO_TAG, tag), req, resp, NewHeader().Add("token", token))
 
 	if err != nil {
+		return &resp.Data, err
+	}
+	if resp.Code != CODE_SUCCESS {
+		return &resp.Data, fmt.Errorf("%v", resp.Msg)
+	}
+	return &resp.Data, nil
+}
+
+//UnbindUsersOfTag 一批用户解绑一个标签 解绑用户的某个标签属性，不影响其它标签
+//此接口有频次控制(每分钟最多100次，每天最多10000次)，申请修改请点击右侧“技术咨询”了解详情
+func (c *User) UnbindUsersOfTag(tag string, cids []string) (*getui.UnbindUsersOfTagData, error) {
+	token := c.getToken(c.appId)
+	resp := struct {
+		BaseResp
+		Data getui.UnbindUsersOfTagData `json:"data"`
+	}{}
+
+	req := struct {
+		Cid []string `json:"cid"`
+	}{
+		Cid: cids,
+	}
+
+	err := DeleteHeader(c.getUrl(PATH_UNBIND_TAG_USERS_OF_TAG, tag), req, resp, NewHeader().Add("token", token))
+
+	if err != nil {
+		return &resp.Data, err
+	}
+	if resp.Code != CODE_SUCCESS {
+		return &resp.Data, fmt.Errorf("%v", resp.Msg)
+	}
+	return &resp.Data, nil
+}
+
+// QueryUserTagsByCid 根据cid查询用户标签列表
+func (c *User) QueryUserTagsByCid(cid string) ([]string, error) {
+	token := c.getToken(c.appId)
+	resp := struct {
+		BaseResp
+		Data getui.QueryUserTagsByCidData
+	}{}
+
+	err := GetHeader(c.getUrl(PATH_QUERY_USER_TAG_OF_TAG, cid), resp, NewHeader().Add("token", token))
+
+	if err != nil {
+		return nil, err
+	}
+	if resp.Code != CODE_SUCCESS {
+		return nil, fmt.Errorf("%v", resp.Msg)
+	}
+
+	result := make([]string, 0, 1)
+	if len(resp.Data) <= 0 || len(resp.Data[cid]) <= 0 {
+		return result, nil
+	}
+
+	return strings.Split(resp.Data[cid][1], " "), nil
+}
+
+//AddUserBlack 添加黑名单用户
+//将单个或多个用户加入黑名单，对于黑名单用户在推送过程中会被过滤掉。
+func (c *User) AddUserBlack(cids []string) error {
+	token := c.getToken(c.appId)
+	resp := BaseResp{}
+
+	err := PostHeader(c.getUrl(PATH_ADD_BLACK, strings.Join(cids, ",")), nil, resp, NewHeader().Add("token", token))
+
+	if err != nil {
 		return err
 	}
 	if resp.Code != CODE_SUCCESS {
 		return fmt.Errorf("%v", resp.Msg)
 	}
+
 	return nil
 }
 

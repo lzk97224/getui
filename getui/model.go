@@ -96,3 +96,9 @@ type UserBindAlias struct {
 	Cid   string `json:"cid"`
 	Alias string `json:"alias"`
 }
+
+type BindUsersToTagData map[string]string
+
+type UnbindUsersOfTagData map[string]string
+
+type QueryUserTagsByCidData map[string][]string
